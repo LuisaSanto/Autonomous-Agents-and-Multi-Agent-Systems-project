@@ -25,38 +25,50 @@ public class GraphicalInterface extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	
-	static JTextField speed;
+	static JTextField speed, clean, decay;
 	static JPanel boardPanel;
 	static JButton run, reset, step;
 	
+	public Board board;
+	
 	public GraphicalInterface(Board board) {
+		this.board = board;
 		setTitle("FirePrevention");		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLayout(null);
-		setSize(640, 600);
+		setSize(670, 580);
 		add(createButtonPanel(board));
 		boardPanel = new JPanel();
-		boardPanel.setSize(new Dimension(600,500));
+		boardPanel.setSize(new Dimension(630,500));
 		boardPanel.setLocation(new Point(20,60));
 		boardPanel.setLayout(new GridLayout(board.nX,board.nY));
 		for(int i=0; i<board.nX; i++)
 			for(int j=0; j<board.nY; j++)
 				boardPanel.add(new JPanel());
 		displayBoard(board);
-		displayAgents(board);
 		board.GUI = this;
 		add(boardPanel);
+		displayAgents(board);
 	}
 
 	public void displayBoard(Board board) {
 		for(int i=0; i<board.nX; i++){
 			for(int j=0; j<board.nY; j++){
 				double value = board.board[i][j];
-				int R = (int) (255*value)/5;
-				int G = (int) (255*(5-value))/5; 
-				JPanel p = ((JPanel)boardPanel.getComponent(i*board.nY+j));
-				p.setBackground(new Color(R,G,0));
-				p.setBorder(BorderFactory.createLineBorder(Color.white));
+				if(value == 5)
+				{
+					JPanel p = ((JPanel)boardPanel.getComponent(i*board.nY+j));
+					p.setBackground(Color.black);
+					p.setBorder(BorderFactory.createLineBorder(Color.white));
+				}
+				else 
+				{
+					int R = (int) (255*value)/5;
+					int G = (int) (255*(5-value))/5; 
+					JPanel p = ((JPanel)boardPanel.getComponent(i*board.nY+j));
+					p.setBackground(new Color(R,G,0));
+					p.setBorder(BorderFactory.createLineBorder(Color.white));
+				}
 			}
 		}
 		boardPanel.invalidate();
@@ -80,14 +92,43 @@ public class GraphicalInterface extends JFrame {
 
 	private Component createButtonPanel(Board board) {
 		JPanel panel = new JPanel();
-		panel.setSize(new Dimension(600,50));
-		panel.setLocation(new Point(0,0));
+		panel.setSize(new Dimension(650,50));
+		panel.setLocation(new Point(10,10));
+		
+		clean = new JTextField(" Steps to clean ");
+		clean.setMargin(new Insets(5,5,5,5));
+		panel.add(clean);
+		
+		decay = new JTextField(" Speed for decay ");
+		decay.setMargin(new Insets(5,5,5,5));
+		panel.add(decay);
 		
 		step = new JButton("Step");
 		panel.add(step);
 		step.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				if(run.getText().equals("Run")) board.step();
+				if(run.getText().equals("Run")) 
+				{
+					int steps;
+					double decayTime;
+					try
+					{
+						decayTime = Double.valueOf(decay.getText());
+					}
+					catch(Exception e)
+					{
+						decayTime = 1.001; // Default values for decay Time
+					}
+					try
+					{
+						steps = Integer.valueOf(clean.getText());
+					}
+					catch(Exception e)
+					{
+						steps = 5; // Default value of steps that take to cleanse a spot
+					}
+					board.step(decayTime, steps);
+				}
 				else board.stop();
 			}
 		});
@@ -112,7 +153,25 @@ public class GraphicalInterface extends JFrame {
 						JOptionPane.showMessageDialog(null, output, "Error", JOptionPane.PLAIN_MESSAGE);
 					}
 					if(time>0){
-						board.run(time);
+						int steps;
+						double decayTime;
+						try
+						{
+							decayTime = Double.valueOf(decay.getText());
+						}
+						catch(Exception e)
+						{
+							decayTime = 1.001; // Default values for decay Time
+						}
+						try
+						{
+							steps = Integer.valueOf(clean.getText());
+						}
+						catch(Exception e)
+						{
+							steps = 5; // Default value of steps that take to cleanse a spot
+						}
+						board.run(time, decayTime, steps);
 	 					run.setText("Stop");						
 					}
  				} else {
@@ -121,7 +180,7 @@ public class GraphicalInterface extends JFrame {
  				}
 			}
 		});
-		speed = new JTextField(" time per step in [1,100] ");
+		speed = new JTextField(" Time per step in [1,100] ");
 		speed.setMargin(new Insets(5,5,5,5));
 		panel.add(speed);
 		
