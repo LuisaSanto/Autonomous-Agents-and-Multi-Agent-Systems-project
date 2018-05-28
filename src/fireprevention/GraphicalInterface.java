@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -26,8 +27,9 @@ public class GraphicalInterface extends JFrame {
 	private static final long serialVersionUID = 1L;
 	
 	static JTextField speed, clean, decay;
-	static JPanel boardPanel;
+	static JPanel boardPanel, statsPanel;
 	static JButton run, reset, step;
+	static JLabel blacks, whites, steps;
 	
 	public Board board;
 	
@@ -36,19 +38,35 @@ public class GraphicalInterface extends JFrame {
 		setTitle("FirePrevention");		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLayout(null);
-		setSize(670, 580);
+		setSize(670, 690);
 		add(createButtonPanel(board));
+		JLabel label = new JLabel("Number of failed nodes : ");
+		blacks = new JLabel("0");
+		JLabel label1 = new JLabel("Number of safe nodes : ");
+		whites = new JLabel("0");
+		JLabel label2 = new JLabel("Number of steps : ");
+		steps = new JLabel("0");
 		boardPanel = new JPanel();
 		boardPanel.setSize(new Dimension(630,500));
-		boardPanel.setLocation(new Point(20,60));
+		boardPanel.setLocation(new Point(20,90));
 		boardPanel.setLayout(new GridLayout(board.nX,board.nY));
 		for(int i=0; i<board.nX; i++)
 			for(int j=0; j<board.nY; j++)
 				boardPanel.add(new JPanel());
-		displayBoard(board);
-		board.GUI = this;
+		statsPanel = new JPanel();
+		statsPanel.setSize(new Dimension(300,80));
+		statsPanel.setLocation(new Point(180,600));
+		statsPanel.add(label2);
+		statsPanel.add(steps);
+		statsPanel.add(label);
+		statsPanel.add(blacks);
+		statsPanel.add(label1);
+		statsPanel.add(whites);
 		add(boardPanel);
+		add(statsPanel);
+		displayBoard(board);		
 		displayAgents(board);
+		board.GUI = this;
 	}
 
 	public void displayBoard(Board board) {
@@ -95,17 +113,15 @@ public class GraphicalInterface extends JFrame {
 
 	private Component createButtonPanel(Board board) {
 		JPanel panel = new JPanel();
-		panel.setSize(new Dimension(650,50));
-		panel.setLocation(new Point(10,10));
+		panel.setSize(new Dimension(500,80));
+		panel.setLocation(new Point(80,10));
 		
-		clean = new JTextField(" Steps to clean ");
+		clean = new JTextField(" Optional : Steps to clean ");
 		clean.setMargin(new Insets(5,5,5,5));
-		panel.add(clean);
 		
-		decay = new JTextField(" Speed for decay ");
+		decay = new JTextField(" Optional : Speed for decay [1.0,1.01]");
 		decay.setMargin(new Insets(5,5,5,5));
-		panel.add(decay);
-		
+
 		step = new JButton("Step");
 		panel.add(step);
 		step.addActionListener(new ActionListener() {
@@ -186,6 +202,8 @@ public class GraphicalInterface extends JFrame {
 		speed = new JTextField(" Time per step in [1,100] ");
 		speed.setMargin(new Insets(5,5,5,5));
 		panel.add(speed);
+		panel.add(clean);
+		panel.add(decay);
 		
 		return panel;
 	}

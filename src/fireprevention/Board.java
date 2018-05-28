@@ -17,11 +17,15 @@ public class Board {
 	public List<Agent> UAVs;
 	public double[][] board;
 	public GraphicalInterface GUI;
+	public int failed, safe, steps;
 	
 	public Board(int nX, int nY, int nUAVs) {
 		this.nX = nX;
 		this.nY = nY;
 		this.nUAVs = nUAVs;
+		this.failed = 0;
+		this.steps = 0;
+		this.safe = 0;
 		initialize();
 	}
 
@@ -65,6 +69,7 @@ public class Board {
 		
 	    public void run() {
 	    	while(true){
+	    		
 		    	removeAgents();
 		    	updateHeatMap(this.decay);
 		    	for(Agent a : UAVs) a.radar.removeAgents(UAVs);
@@ -74,6 +79,7 @@ public class Board {
 				for(Agent a : UAVs) a.updateRadar(); // Updates the Agent Radar to reflect the action above
 				displayBoard();
 				displayAgents();
+				
 				try {
 					sleep(time*10);
 				} catch (InterruptedException e) {
@@ -96,6 +102,13 @@ public class Board {
 			runThread.interrupt();
 			runThread.stop();
 		}
+		
+		this.steps = 0;
+		this.failed = 0;
+		this.safe = 0;
+		GraphicalInterface.blacks.setText(""+this.failed);
+		GraphicalInterface.steps.setText(""+this.steps);
+		GraphicalInterface.whites.setText(""+this.safe);
 		
 		for(Agent a : UAVs) {
 			a.radar.setVisible(false);
@@ -126,12 +139,17 @@ public class Board {
 				if(board[i][j] < 5)
 				{
 					double value = board[i][j] * decay;
-					if(value > 5)
+					if(value > 5) {
 						board[i][j] = 5;
+						this.failed++;
+						GraphicalInterface.blacks.setText(""+this.failed);
+					}
 					else
 						board[i][j] = value;
 				}	
-			}	
+			}
+		this.steps++;
+		GraphicalInterface.steps.setText(""+this.steps);
 	}
 
 	@SuppressWarnings("deprecation")

@@ -46,8 +46,13 @@ public class Agent {
 	
 	public void updateRadar() 
 	{
+		displayBoard();
+		displayAgents();
+	}
+	
+	public void displayBoard()
+	{
 		this.radar.displayBoard(this.locations);
-		this.radar.displayAgents(this.board.UAVs, this.position);
 	}
 	
 	public void removeAgents()
@@ -68,6 +73,8 @@ public class Agent {
 			double value = Math.abs(r.nextGaussian());
 			this.board.board[this.position.y][this.position.x] = value;
 			this.protecting = false;
+			this.board.safe++;
+			GraphicalInterface.whites.setText(""+this.board.safe);
 		}
 		else
 			this.steps--;
