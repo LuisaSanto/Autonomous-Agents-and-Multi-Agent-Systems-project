@@ -42,6 +42,10 @@ public class Board {
 			locations[i][0] = board[i][0];
 			UAVs.add(new Agent(new Point(0,i), nX, nY, locations));
 		}
+		for(Agent a : UAVs)
+		{
+			a.setAgents(UAVs);
+		}
 	}
 
 	
@@ -75,7 +79,6 @@ public class Board {
 				try {
 					sleep(time*10);
 				} catch (InterruptedException e) {
-					e.printStackTrace();
 				}
 	    	}
 	    }
@@ -87,13 +90,22 @@ public class Board {
 		displayAgents();
 	}
 
+	@SuppressWarnings("deprecation")
 	public void reset() {
+		
+		if(GraphicalInterface.run.getText().equals("Stop")) {
+			GraphicalInterface.run.setText("Run");
+			runThread.interrupt();
+			runThread.stop();
+		}
+		
 		for(Agent a : UAVs) {
 			a.radar.setVisible(false);
 			a.radar.dispose(); }
 		initialize();
 		displayBoard();
 		displayAgents();
+		
 	}
 
 	public void step(double decay, int steps) {
