@@ -40,12 +40,10 @@ public class Board {
 				for(int j=0; j<nY; j++) 
 					locations[m][j] = -1;
 			locations[i][0] = board[i][0];
-			UAVs.add(new Agent(new Point(0,i), nX, nY, locations));
+			UAVs.add(new Agent(new Point(0,i), locations, this));
 		}
-		for(Agent a : UAVs)
-		{
-			a.setAgents(UAVs);
-		}
+		
+		for(Agent a : UAVs) { a.displayAgents(); }
 	}
 
 	
@@ -69,11 +67,11 @@ public class Board {
 	    	while(true){
 		    	removeAgents();
 		    	updateHeatMap(this.decay);
-				for(Agent a : UAVs) {
-					a.go();
-					a.setLocation(board[a.position.y][a.position.x]); // Gives the Agent the status of the ground on his current location
-					a.updateRadar(); // Updates the Agent Radar to reflect the action above
+		    	for(Agent a : UAVs) a.radar.removeAgents(UAVs);
+				for(Agent a : UAVs) { 
+					a.go(this.steps);
 				}
+				for(Agent a : UAVs) a.updateRadar(); // Updates the Agent Radar to reflect the action above
 				displayBoard();
 				displayAgents();
 				try {
@@ -111,11 +109,11 @@ public class Board {
 	public void step(double decay, int steps) {
 		removeAgents();
 		updateHeatMap(decay);
+		for(Agent a : UAVs) a.removeAgents();
 		for(Agent a : UAVs) { 
-			a.go();
-			a.setLocation(board[a.position.y][a.position.x]); // Gives the Agent the status of the ground on his current location
-			a.updateRadar(); // Updates the Agent Radar to reflect the action above
+			a.go(steps);
 		}
+		for(Agent a : UAVs) a.updateRadar(); // Updates the Agent Radar to reflect the action above
 		displayBoard();
 		displayAgents();
 	}

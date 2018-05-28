@@ -85,7 +85,10 @@ public class GraphicalInterface extends JFrame {
 	public void displayAgents(Board board) {
 		for(Agent agent : board.UAVs){
 			JPanel p = ((JPanel)boardPanel.getComponent(agent.position.x+agent.position.y*board.nX));
-			p.setBorder(BorderFactory.createLineBorder(Color.red,3));			
+			if(agent.isProtecting())
+				p.setBorder(BorderFactory.createLineBorder(Color.orange,3));	
+			else
+				p.setBorder(BorderFactory.createLineBorder(Color.blue,3));			
 		}
 		boardPanel.invalidate();
 	}

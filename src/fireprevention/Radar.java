@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Point;
+import java.util.List;
+
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -24,9 +26,9 @@ public class Radar extends JFrame {
 		setTitle("FirePrevention Radar");		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLayout(null);
-		setSize(640, 540);
+		setSize(440, 360);
 		boardPanel = new JPanel();
-		boardPanel.setSize(new Dimension(600,500));
+		boardPanel.setSize(new Dimension(400,330));
 		boardPanel.setLocation(new Point(20,20));
 		boardPanel.setLayout(new GridLayout(nX,nY));
 		for(int i=0; i<nX; i++)
@@ -60,6 +62,24 @@ public class Radar extends JFrame {
 					p.setBorder(BorderFactory.createLineBorder(Color.white));
 				}
 			}
+		}
+		boardPanel.invalidate();
+	}
+	
+	public void displayAgents(List<Agent> agents, Point position) {
+		for(Agent agent : agents){
+			JPanel p = ((JPanel)boardPanel.getComponent(agent.position.x+agent.position.y*nX));
+			p.setBorder(BorderFactory.createLineBorder(Color.cyan,3));			
+		}
+		JPanel p = ((JPanel)boardPanel.getComponent(position.x+position.y*nX));
+		p.setBorder(BorderFactory.createLineBorder(Color.blue,3));
+		boardPanel.invalidate();
+	}
+	
+	public void removeAgents(List<Agent> agents) {
+		for(Agent agent : agents){
+			JPanel p = ((JPanel)boardPanel.getComponent(agent.position.x+agent.position.y*nX));
+			p.setBorder(BorderFactory.createLineBorder(Color.white));			
 		}
 		boardPanel.invalidate();
 	}
