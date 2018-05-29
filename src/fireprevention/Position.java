@@ -3,10 +3,46 @@ package fireprevention;
 import java.awt.*;
 
 public class Position {
-    private double location;
-    private double[][] locations;
-    public Point position;
+    int row;
+    int column;
     int heuristicCost = 0;
+    Position parent = null;
+    int finalCost = 0;
+
+    public Position() {
+    }
+
+    public Position(int row, int column, int heuristicCost, Position parent, int finalCost) {
+        this.row = row;
+        this.column = column;
+        this.heuristicCost = heuristicCost;
+        this.parent = parent;
+        this.finalCost = finalCost;
+    }
+
+    public int getRow() {
+        return row;
+    }
+
+    public void setRow(int row) {
+        this.row = row;
+    }
+
+    public int getColumn() {
+        return column;
+    }
+
+    public void setColumn(int column) {
+        this.column = column;
+    }
+
+    public Position getParent() {
+        return parent;
+    }
+
+    public void setParent(Position parent) {
+        this.parent = parent;
+    }
 
     public int getHeuristicCost() {
         return heuristicCost;
@@ -22,52 +58,5 @@ public class Position {
 
     public void setFinalCost(int finalCost) {
         this.finalCost = finalCost;
-    }
-
-    int finalCost = 0;
-
-    public Position() {
-    }
-
-    public Position(double location) {
-        this.location = location;
-    }
-
-    public Position(double[][] locations) {
-        this.locations = locations;
-    }
-
-    public Position(Point position) {
-        this.position = position;
-    }
-
-    public Position(double location, double[][] locations, Point position) {
-        this.location = location;
-        this.locations = locations;
-        this.position = position;
-    }
-
-    public double getLocation() {
-        return location;
-    }
-
-    public Point getPosition() {
-        return position;
-    }
-
-    public double[][] getLocations() {
-        return locations;
-    }
-
-    public void setLocation(double location) {
-        this.location = location;
-    }
-
-    public void setLocations(double[][] locations) {
-        this.locations = locations;
-    }
-
-    public void setPosition(Point position) {
-        this.position = position;
     }
 }
