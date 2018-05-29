@@ -1,5 +1,6 @@
 package fireprevention;
 
+import java.util.Comparator;
 import java.util.PriorityQueue;
 
 public class FindPath {
@@ -12,7 +13,7 @@ public class FindPath {
     static boolean closed[][];
     static Position start;
     static Position end;
-    private Board board;
+    private Position[][] locations;
     static int statesExpanded = 0;
 
     public static int getvHCost() {
@@ -27,13 +28,12 @@ public class FindPath {
         FindPath.statesExpanded = statesExpanded;
     }
 
-    public Board getBoard() {
-
-        return board;
+    public Position[][] getLocations() {
+        return locations;
     }
 
-    public void setBoard(Board board) {
-        this.board = board;
+    public void setLocations(Position[][] locations) {
+        this.locations = locations;
     }
 
     public static Position getEnd() {
@@ -97,5 +97,20 @@ public class FindPath {
 
     public static void setOpen(PriorityQueue<Position> open) {
         FindPath.open = open;
+    }
+
+    static class PositionComparator implements Comparator<Position>{
+        @Override
+        public int compare(Position p1, Position p2) {
+            Position c1 = (Position) p1;
+            Position c2 = (Position) p2;
+
+            return c1.finalCost<c2.finalCost? -1 : c1.finalCost>c2.finalCost ? 1:0;
+        }
+    }
+
+    //A STAR
+    public static PathDetails findPathAstar(Board board, Position source, Position destination) {
+        return null;
     }
 }

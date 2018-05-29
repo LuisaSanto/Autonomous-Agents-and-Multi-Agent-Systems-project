@@ -6,6 +6,15 @@ public class Position {
     private double location;
     private double[][] locations;
     public Point position;
+    int heuristicCost = 0;
+
+    public int getHeuristicCost() {
+        return heuristicCost;
+    }
+
+    public void setHeuristicCost(int heuristicCost) {
+        this.heuristicCost = heuristicCost;
+    }
 
     public int getFinalCost() {
         return finalCost;
