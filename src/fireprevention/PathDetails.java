@@ -9,4 +9,4 @@ public class PathDetails {
         this.path = path;
         this.statesExpanded = statesExpanded;
     }
-}ß
+}
