@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+
 /**
  * Environment
  * @author Rui Henriques
@@ -18,6 +19,7 @@ public class Board {
 	public double[][] board;
 	public GraphicalInterface GUI;
 	public int failed, safe, steps;
+	public double[][] time;
 	
 	public Board(int nX, int nY, int nUAVs) {
 		this.nX = nX;
@@ -39,9 +41,12 @@ public class Board {
 		
 		UAVs = new ArrayList<Agent>();
 		double[][] locations = new double[nX][nY];
+		time = new double[nX][nY];
 		for(int m=0; m<nX; m++)
-			for(int j=0; j<nY; j++) 
+			for(int j=0; j<nY; j++) {
+				time[m][j] = 0;
 				locations[m][j] = -1;
+			}
 		for(int i=0; i<nUAVs && i<nY; i++) {
 			//locations[i][0] = board[i][0];
 			UAVs.add(new Agent(new Point(0,i), this));
@@ -130,13 +135,19 @@ public class Board {
 	public void step(double decay, int steps) {
 		removeAgents();
 		updateHeatMap(decay);
+		updateTime();
 		for(Agent a : UAVs) a.removeAgents();
-		for(Agent a : UAVs) { 
-			a.go(steps);
-		}
+		for(Agent a : UAVs) a.go(steps);
 		for(Agent a : UAVs) a.updateRadar(); 
 		displayBoard();
 		displayAgents();
+	}
+
+	private void updateTime() {
+		for(int m=0; m<nX; m++)
+			for(int j=0; j<nY; j++) {
+				time[m][j] = time[m][j] + 1;
+			}
 	}
 
 	public void updateHeatMap(double decay) 
