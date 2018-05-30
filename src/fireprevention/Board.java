@@ -85,6 +85,7 @@ public class Board {
 	    		
 		    	removeAgents();
 		    	updateHeatMap(this.decay);
+		    	updateTime();
 		    	for(Agent a : UAVs) a.radar.removeAgents(UAVs);
 				for(Agent a : UAVs) { 
 					a.go(this.steps);
@@ -163,7 +164,7 @@ public class Board {
 					
 					Random r = new Random();
 					int low = 0;
-					int high = 4;
+					int high = 3;
 					int signal = r.nextInt(high-low) + low;
 					low = 1;
 					high = 5;

@@ -46,10 +46,10 @@ public class Agent {
 		
 		setLocation();
 		System.out.println();
-		System.out.println("Ganho de mover para UP : " + (unknownGain("UP") + fireRisk("UP")));
-		System.out.println("Ganho de mover para DOWN : " + (unknownGain("DOWN") + fireRisk("DOWN")));
-		System.out.println("Ganho de mover para LEFT : " + (unknownGain("LEFT") + fireRisk("LEFT")));
-		System.out.println("Ganho de mover para RIGHT : " + (unknownGain("RIGHT") + fireRisk("RIGHT")));
+		System.out.println("Ganho de mover para UP : " + (unknownGain("UP") + fireRisk("UP") + timeGain("UP")));
+		System.out.println("Ganho de mover para DOWN : " + (unknownGain("DOWN") + fireRisk("DOWN") + timeGain("DOWN")));
+		System.out.println("Ganho de mover para LEFT : " + (unknownGain("LEFT") + fireRisk("LEFT") + timeGain("LEFT")));
+		System.out.println("Ganho de mover para RIGHT : " + (unknownGain("RIGHT") + fireRisk("RIGHT") + timeGain("RIGHT")));
 //		System.out.println(board.time[0][0]+ " " + board.time[0][1]);
 	}
 	
@@ -136,10 +136,10 @@ public class Agent {
 	
 	public void Algorithm()
 	{
-		double UP = unknownGain("UP") + fireRisk("UP");
-		double DOWN = unknownGain("DOWN") + fireRisk("DOWN");
-		double LEFT = unknownGain("LEFT") + fireRisk("LEFT");
-		double RIGHT = unknownGain("RIGHT") + fireRisk("RIGHT");
+		double UP = unknownGain("UP") + fireRisk("UP") + timeGain("UP");
+		double DOWN = unknownGain("DOWN") + fireRisk("DOWN") + timeGain("DOWN");
+		double LEFT = unknownGain("LEFT") + fireRisk("LEFT") + timeGain("LEFT");
+		double RIGHT = unknownGain("RIGHT") + fireRisk("RIGHT") + timeGain("RIGHT");
 
 		if(UP == 0 && DOWN == 0 && LEFT == 0 && RIGHT == 0) moveRandom();
 		else if(UP >= DOWN)
@@ -257,6 +257,67 @@ public class Agent {
 	
 	
 	/** C: decision process */
+	
+	public double timeGain(String direction)
+	{
+		double result = 1.3;
+		double factor = 0;
+		Point tempPosition;
+		
+		switch(direction)
+		{
+		case "UP" : 
+			if (!wallUp() & !objectUp()) {
+				tempPosition = new Point(this.position.x, this.position.y-1);
+					if(tempPosition.y-1 >= 0){
+						factor += this.board.time[tempPosition.y-1][tempPosition.x];
+						if(tempPosition.x-1 >= 0)
+							factor += this.board.time[tempPosition.y-1][tempPosition.x-1];
+						if(tempPosition.x+1 <= this.board.nX-1)
+							factor += this.board.time[tempPosition.y-1][tempPosition.x+1];
+					}
+			}
+			break;
+		case "DOWN" :
+			if (!wallDown() & !objectDown()) {
+				tempPosition = new Point(this.position.x, this.position.y+1);
+					if(tempPosition.y+1 <= this.board.nY-1){
+						factor += this.board.time[tempPosition.y+1][tempPosition.x];
+						if(tempPosition.x-1 >= 0)
+							factor += this.board.time[tempPosition.y+1][tempPosition.x-1];
+						if(tempPosition.x+1 <= this.board.nX-1)
+							factor += this.board.time[tempPosition.y+1][tempPosition.x+1];
+					}
+			}
+			break;
+		case "LEFT" :
+			if (!wallLeft() & !objectLeft()) {
+				tempPosition = new Point(this.position.x-1, this.position.y);
+					if(tempPosition.x-1 >= 0){
+						factor += this.board.time[tempPosition.y][tempPosition.x-1];
+						if(tempPosition.y-1 >= 0)
+							factor += this.board.time[tempPosition.y-1][tempPosition.x-1];
+						if(tempPosition.y+1 <= this.board.nY-1)
+							factor += this.board.time[tempPosition.y+1][tempPosition.x-1];
+					}
+			}
+			break;
+		case "RIGHT" :
+			if (!wallRight() & !objectRight()) {
+				tempPosition = new Point(this.position.x+1, this.position.y);
+					if(tempPosition.x+1 <= this.board.nX-1){
+						factor += this.board.time[tempPosition.y][tempPosition.x+1];
+						if(tempPosition.y-1 >= 0)
+							factor += this.board.time[tempPosition.y-1][tempPosition.x+1];
+						if(tempPosition.y+1 <= this.board.nY-1)
+							factor += this.board.time[tempPosition.y+1][tempPosition.x+1];
+					}
+			}
+			break;
+		}
+
+		return result * (factor/(3*this.board.steps));
+	}
 	
 
 	public double unknownGain(String direction)
