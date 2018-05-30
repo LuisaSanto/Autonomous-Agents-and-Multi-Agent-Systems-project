@@ -236,7 +236,7 @@ public class Agent {
 
 	public double unknownGain(String direction)
 	{
-		double result = 4;
+		double result = 3;
 		double factor = 0;
 		Point tempPosition;
 		
@@ -247,13 +247,13 @@ public class Agent {
 				tempPosition = new Point(this.position.x, this.position.y-1);
 					if(tempPosition.y-1 >= 0){
 						if(this.locations[tempPosition.y-1][tempPosition.x] == -1)
-							factor += 0.5;
+							factor += 0.33;
 						if(tempPosition.x-1 >= 0)
 							if(this.locations[tempPosition.y-1][tempPosition.x-1] == -1)
-								factor += 0.5;
+								factor += 0.33;
 						if(tempPosition.x+1 <= this.board.nX-1)
 							if(this.locations[tempPosition.y-1][tempPosition.x+1] == -1)
-								factor += 0.5;
+								factor += 0.33;
 					}
 			}
 			break;
@@ -263,14 +263,14 @@ public class Agent {
 					if(tempPosition.y+1 <= this.board.nY-1){
 						if(this.locations[tempPosition.y+1][tempPosition.x] == -1.0)
 						{
-							factor += 0.5;
+							factor += 0.33;
 						}
 						if(tempPosition.x-1 >= 0)
 							if(this.locations[tempPosition.y+1][tempPosition.x-1] == -1.0)
-								factor += 0.5;
+								factor += 0.33;
 						if(tempPosition.x+1 <= this.board.nX-1)
 							if(this.locations[tempPosition.y+1][tempPosition.x+1] == -1.0)
-								factor += 0.5;
+								factor += 0.33;
 					}
 			}
 			break;
@@ -279,13 +279,13 @@ public class Agent {
 				tempPosition = new Point(this.position.x-1, this.position.y);
 					if(tempPosition.x-1 >= 0){
 						if(this.locations[tempPosition.y][tempPosition.x-1] == -1)
-							factor += 0.5;
+							factor += 0.33;
 						if(tempPosition.y-1 >= 0)
 							if(this.locations[tempPosition.y-1][tempPosition.x-1] == -1)
-								factor += 0.5;
+								factor += 0.33;
 						if(tempPosition.y+1 <= this.board.nY-1)
 							if(this.locations[tempPosition.y+1][tempPosition.x-1] == -1)
-								factor += 0.5;
+								factor += 0.33;
 					}
 			}
 			break;
@@ -294,13 +294,13 @@ public class Agent {
 				tempPosition = new Point(this.position.x+1, this.position.y);
 					if(tempPosition.x+1 <= this.board.nX-1){
 						if(this.locations[tempPosition.y][tempPosition.x+1] == -1)
-							factor += 0.5;
+							factor += 0.33;
 						if(tempPosition.y-1 >= 0)
 							if(this.locations[tempPosition.y-1][tempPosition.x+1] == -1)
-								factor += 0.5;
+								factor += 0.33;
 						if(tempPosition.y+1 <= this.board.nY-1)
 							if(this.locations[tempPosition.y+1][tempPosition.x+1] == -1)
-								factor += 0.5;
+								factor += 0.33;
 					}
 			}
 			break;
@@ -311,57 +311,57 @@ public class Agent {
 	
 	public double fireRisk(String direction)
 	{
-		double result = 5;
+		double result = 6;
 		double factor = 0;
 		
 		switch(direction)
 		{
 		case "UP" : 
 			if (!wallUp() & !objectUp()) {
-				if(this.locations[this.position.y-1][this.position.x] > varFire)
-					factor = 1;
 				if (!wallLeft())
 					if(this.locations[this.position.y-1][this.position.x-1] > varFire)
 						factor += 0.5;
 				if (!wallRight())
 					if(this.locations[this.position.y-1][this.position.x+1] > varFire)
 						factor += 0.5;
+				if(this.locations[this.position.y-1][this.position.x] > varFire)
+					factor = 1;
 			}
 			break;
 		case "DOWN" :
 			if(!wallDown() & !objectDown()) {
-				if(this.locations[this.position.y+1][this.position.x] > varFire)
-					factor = 1;
 				if (!wallLeft())
 					if(this.locations[this.position.y+1][this.position.x-1] > varFire)
 						factor += 0.5;
 				if (!wallRight())
 					if(this.locations[this.position.y+1][this.position.x+1] > varFire)
 						factor += 0.5;
+				if(this.locations[this.position.y+1][this.position.x] > varFire)
+					factor = 1;
 			}
 			break;
 		case "LEFT" :
 			if(!wallLeft() & !objectLeft()) {
-				if(this.locations[this.position.y][this.position.x-1] > varFire)
-					factor = 1;
 				if (!wallUp())
 					if(this.locations[this.position.y-1][this.position.x-1] > varFire)
 						factor += 0.5;
 				if (!wallDown())
 					if(this.locations[this.position.y+1][this.position.x-1] > varFire)
 						factor += 0.5;
+				if(this.locations[this.position.y][this.position.x-1] > varFire)
+					factor = 1;
 			}
 			break;
 		case "RIGHT" :
 			if(!wallRight() & !objectRight()) {
-				if(this.locations[this.position.y][this.position.x+1] > varFire)
-					factor = 1;
 				if (!wallUp())
 					if(this.locations[this.position.y-1][this.position.x+1] > varFire)
 						factor += 0.5;
 				if (!wallDown())
 					if(this.locations[this.position.y+1][this.position.x+1] > varFire)
 						factor += 0.5;
+				if(this.locations[this.position.y][this.position.x+1] > varFire)
+					factor = 1;
 			}
 			break;
 		}
