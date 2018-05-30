@@ -61,7 +61,7 @@ public class Agent {
 
 	public boolean isNear(){
 		for(Agent a : board.UAVs)
-		 if (position.distance(a.position) < 2 || position.distance(a.position) < 2*sqrt(2)) return true;
+		 if (position.distance(a.position) <= 2 || position.distance(a.position) <= 2*sqrt(2)) return true;
 		return false;
 	}
 	
