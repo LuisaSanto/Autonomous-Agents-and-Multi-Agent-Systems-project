@@ -38,16 +38,24 @@ public class Board {
 			
 		
 		UAVs = new ArrayList<Agent>();
+		double[][] locations = new double[nX][nY];
+		for(int m=0; m<nX; m++)
+			for(int j=0; j<nY; j++) 
+				locations[m][j] = -1;
 		for(int i=0; i<nUAVs && i<nY; i++) {
-			double[][] locations = new double[nX][nY];
-			for(int m=0; m<nX; m++)
-				for(int j=0; j<nY; j++) 
-					locations[m][j] = -1;
-			locations[i][0] = board[i][0];
-			UAVs.add(new Agent(new Point(0,i), locations, this));
+			//locations[i][0] = board[i][0];
+			UAVs.add(new Agent(new Point(0,i), this));
 		}
+		Radar radar = new Radar(locations, nX, nY);
+		radar.setVisible(true);
+		for(Agent a : UAVs) { 
+			a.setRadar(radar);
+			a.setLocations(locations);
+			a.setLocation();
+		}
+		radar.displayBoard(locations);
+		radar.displayAgents(UAVs);
 		
-		for(Agent a : UAVs) { a.displayAgents(); }
 	}
 
 	
@@ -76,7 +84,7 @@ public class Board {
 				for(Agent a : UAVs) { 
 					a.go(this.steps);
 				}
-				for(Agent a : UAVs) a.updateRadar(); // Updates the Agent Radar to reflect the action above
+				for(Agent a : UAVs) a.updateRadar(); 
 				displayBoard();
 				displayAgents();
 				
@@ -126,7 +134,7 @@ public class Board {
 		for(Agent a : UAVs) { 
 			a.go(steps);
 		}
-		for(Agent a : UAVs) a.updateRadar(); // Updates the Agent Radar to reflect the action above
+		for(Agent a : UAVs) a.updateRadar(); 
 		displayBoard();
 		displayAgents();
 	}
@@ -134,20 +142,38 @@ public class Board {
 	public void updateHeatMap(double decay) 
 	{
 		for(int i=0; i<nX; i++)
+		{
 			for(int j=0; j<nY; j++)
 			{
-				if(board[i][j] < 5)
+				double value = board[i][j];
+				
+				if(value < 5)
 				{
-					double value = board[i][j] * decay;
-					if(value > 5) {
+					
+					Random r = new Random();
+					int low = 0;
+					int high = 4;
+					int signal = r.nextInt(high-low) + low;
+					low = 1;
+					high = 5;
+					double factor = (r.nextInt(high-low) + low) * decay;
+					
+					if(value * (1+factor) > 5) 
+					{
 						board[i][j] = 5;
 						this.failed++;
 						GraphicalInterface.blacks.setText(""+this.failed);
 					}
 					else
-						board[i][j] = value;
+					{
+						if(signal == 0)
+							board[i][j] = board[i][j] * (1-factor);
+						else
+							board[i][j] = board[i][j] * (1+factor);
+					}
 				}	
 			}
+		}
 		this.steps++;
 		GraphicalInterface.steps.setText(""+this.steps);
 	}

@@ -1,7 +1,5 @@
 package fireprevention;
 
-import java.awt.*;
-
 public class Position {
     int row;
     int column;

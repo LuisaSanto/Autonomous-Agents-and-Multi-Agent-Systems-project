@@ -3,7 +3,7 @@ package fireprevention;
 import java.util.ArrayList;
 
 public class Path {
-    ArrayList<Position> piPath = new ArrayList();
+    ArrayList<Position> piPath = new ArrayList<Position>();
     ArrayList<ArrayList<Position>> alternatePaths = new ArrayList<>();
 
 
@@ -19,7 +19,7 @@ public class Path {
         else return null;
     }
 
-    public void addLocation(Position nextLocation, ArrayList alternatePath) {
+    public void addLocation(Position nextLocation, ArrayList<Position> alternatePath) {
         piPath.add(nextLocation);
         alternatePaths.add(alternatePath);
     }

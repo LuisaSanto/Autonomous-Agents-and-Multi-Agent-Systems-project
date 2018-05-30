@@ -51,8 +51,9 @@ public class GraphicalInterface extends JFrame {
 		boardPanel.setLocation(new Point(20,90));
 		boardPanel.setLayout(new GridLayout(board.nX,board.nY));
 		for(int i=0; i<board.nX; i++)
-			for(int j=0; j<board.nY; j++)
+			for(int j=0; j<board.nY; j++) {
 				boardPanel.add(new JPanel());
+			}
 		statsPanel = new JPanel();
 		statsPanel.setSize(new Dimension(300,80));
 		statsPanel.setLocation(new Point(180,600));
@@ -73,17 +74,16 @@ public class GraphicalInterface extends JFrame {
 		for(int i=0; i<board.nX; i++){
 			for(int j=0; j<board.nY; j++){
 				double value = board.board[i][j];
-				if(value == 5)
+				JPanel p = ((JPanel)boardPanel.getComponent(i*board.nY+j));
+				if(value == 5 && !p.getBackground().equals(Color.black))
 				{
-					JPanel p = ((JPanel)boardPanel.getComponent(i*board.nY+j));
 					p.setBackground(Color.black);
 					p.setBorder(BorderFactory.createLineBorder(Color.white));
-				}
-				else 
+				}					
+				else if(value != 5)
 				{
 					int R = (int) (255*value)/5;
 					int G = (int) (255*(5-value))/5; 
-					JPanel p = ((JPanel)boardPanel.getComponent(i*board.nY+j));
 					p.setBackground(new Color(R,G,0));
 					p.setBorder(BorderFactory.createLineBorder(Color.white));
 				}
@@ -106,7 +106,8 @@ public class GraphicalInterface extends JFrame {
 			if(agent.isProtecting())
 				p.setBorder(BorderFactory.createLineBorder(Color.orange,3));	
 			else
-				p.setBorder(BorderFactory.createLineBorder(Color.blue,3));			
+				p.setBorder(BorderFactory.createLineBorder(Color.darkGray,3));
+			
 		}
 		boardPanel.invalidate();
 	}
@@ -136,7 +137,7 @@ public class GraphicalInterface extends JFrame {
 					}
 					catch(Exception e)
 					{
-						decayTime = 1.001; // Default values for decay Time
+						decayTime = .01; // Default values for decay Time
 					}
 					try
 					{
@@ -180,7 +181,7 @@ public class GraphicalInterface extends JFrame {
 						}
 						catch(Exception e)
 						{
-							decayTime = 1.001; // Default values for decay Time
+							decayTime = .001; // Default values for decay Time
 						}
 						try
 						{

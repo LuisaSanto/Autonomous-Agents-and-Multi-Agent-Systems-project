@@ -14,7 +14,7 @@ public class Radar extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 
-	private JPanel boardPanel;
+	protected JPanel boardPanel;
 	private double[][] board;
 	private int nX;
 	private int nY;
@@ -26,9 +26,9 @@ public class Radar extends JFrame {
 		setTitle("FirePrevention Radar");		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLayout(null);
-		setSize(440, 360);
+		setSize(640, 540);
 		boardPanel = new JPanel();
-		boardPanel.setSize(new Dimension(400,330));
+		boardPanel.setSize(new Dimension(600,500));
 		boardPanel.setLocation(new Point(20,20));
 		boardPanel.setLayout(new GridLayout(nX,nY));
 		for(int i=0; i<nX; i++)
@@ -50,7 +50,7 @@ public class Radar extends JFrame {
 				if(value == -1) 
 				{
 					JPanel p = ((JPanel)boardPanel.getComponent(i*this.nY+j));
-					p.setBackground(new Color(128,128,128));
+					p.setBackground(new Color(128,128,128,35));
 					p.setBorder(BorderFactory.createLineBorder(Color.white));
 				}
 				else 
@@ -66,20 +66,80 @@ public class Radar extends JFrame {
 		boardPanel.invalidate();
 	}
 	
-	public void displayAgents(List<Agent> agents, Point position) {
-		for(Agent agent : agents){
-			JPanel p = ((JPanel)boardPanel.getComponent(agent.position.x+agent.position.y*nX));
-			p.setBorder(BorderFactory.createLineBorder(Color.cyan,3));			
+	public void displayAgents(List<Agent> agents) {
+		JPanel p;
+		for(Agent agent : agents){	
+			if(!agent.wallUp()) 
+			{
+				p = ((JPanel)boardPanel.getComponent(agent.position.x+(agent.position.y-1)*nX));
+				if(board[agent.position.y-1][agent.position.x] > agent.varFire)
+					p.setBorder(BorderFactory.createLineBorder(Color.cyan,2));
+				else
+					p.setBorder(BorderFactory.createLineBorder(Color.darkGray,2));	
+				if(!agent.wallLeft()) {
+					p = ((JPanel)boardPanel.getComponent((agent.position.x-1)+(agent.position.y-1)*nX));
+					if(board[agent.position.y-1][agent.position.x-1] > agent.varFire)
+						p.setBorder(BorderFactory.createLineBorder(Color.cyan,2));
+					else
+						p.setBorder(BorderFactory.createLineBorder(Color.darkGray,2));	
+				}
+				if(!agent.wallRight()) {
+					p = ((JPanel)boardPanel.getComponent((agent.position.x+1)+(agent.position.y-1)*nX));
+					if(board[agent.position.y-1][agent.position.x+1] > agent.varFire)
+						p.setBorder(BorderFactory.createLineBorder(Color.cyan,2));
+					else
+						p.setBorder(BorderFactory.createLineBorder(Color.darkGray,2));	
+				}
+			}
+			if(!agent.wallDown()) 
+			{
+				p = ((JPanel)boardPanel.getComponent((agent.position.x)+(agent.position.y+1)*nX));
+				if(board[agent.position.y+1][agent.position.x] > agent.varFire)
+					p.setBorder(BorderFactory.createLineBorder(Color.cyan,2));
+				else
+					p.setBorder(BorderFactory.createLineBorder(Color.darkGray,2));	
+				if(!agent.wallLeft()){
+						p = ((JPanel)boardPanel.getComponent((agent.position.x-1)+(agent.position.y+1)*nX));
+						if(board[agent.position.y+1][agent.position.x-1] > agent.varFire)
+							p.setBorder(BorderFactory.createLineBorder(Color.cyan,2));
+						else
+							p.setBorder(BorderFactory.createLineBorder(Color.darkGray,2));	
+					}
+				if(!agent.wallRight()){
+					p = ((JPanel)boardPanel.getComponent((agent.position.x+1)+(agent.position.y+1)*nX));
+					if(board[agent.position.y+1][agent.position.x+1] > agent.varFire)
+						p.setBorder(BorderFactory.createLineBorder(Color.cyan,2));
+					else
+						p.setBorder(BorderFactory.createLineBorder(Color.darkGray,2));	
+				}
+			}
+			if(!agent.wallLeft()) {
+				p = ((JPanel)boardPanel.getComponent((agent.position.x-1)+(agent.position.y)*nX));
+				if(board[agent.position.y][agent.position.x-1] > agent.varFire)
+					p.setBorder(BorderFactory.createLineBorder(Color.cyan,2));
+				else
+					p.setBorder(BorderFactory.createLineBorder(Color.darkGray,2));	
+			}
+			if(!agent.wallRight()){
+				p = ((JPanel)boardPanel.getComponent((agent.position.x+1)+(agent.position.y)*nX));
+				if(board[agent.position.y][agent.position.x+1] > agent.varFire)
+					p.setBorder(BorderFactory.createLineBorder(Color.cyan,2));
+				else
+					p.setBorder(BorderFactory.createLineBorder(Color.darkGray,2));	
+			}
 		}
-		JPanel p = ((JPanel)boardPanel.getComponent(position.x+position.y*nX));
-		p.setBorder(BorderFactory.createLineBorder(Color.blue,3));
+		for(Agent agent : agents)
+		{
+			p = ((JPanel)boardPanel.getComponent(agent.position.x+agent.position.y*nX));
+			p.setBorder(BorderFactory.createLineBorder(Color.red,3));
+		}
 		boardPanel.invalidate();
 	}
 	
 	public void removeAgents(List<Agent> agents) {
 		for(Agent agent : agents){
 			JPanel p = ((JPanel)boardPanel.getComponent(agent.position.x+agent.position.y*nX));
-			p.setBorder(BorderFactory.createLineBorder(Color.white));			
+			p.setBorder(BorderFactory.createLineBorder(Color.white));	
 		}
 		boardPanel.invalidate();
 	}
@@ -89,17 +149,16 @@ public class Radar extends JFrame {
 			for(int j=0; j<nY; j++){
 				double value = board[i][j];
 				if (value != -1) {
-					if(value == 5)
+					JPanel p = ((JPanel)boardPanel.getComponent(i*nY+j));
+					if(value == 5 & !p.getBackground().equals(Color.black))
 					{
-						JPanel p = ((JPanel)boardPanel.getComponent(i*nY+j));
 						p.setBackground(Color.black);
 						p.setBorder(BorderFactory.createLineBorder(Color.white));
 					}
-					else 
+					else if(value != 5)
 					{
 						int R = (int) (255*value)/5;
 						int G = (int) (255*(5-value))/5; 
-						JPanel p = ((JPanel)boardPanel.getComponent(i*nY+j));
 						p.setBackground(new Color(R,G,0));
 						p.setBorder(BorderFactory.createLineBorder(Color.white));
 					}
