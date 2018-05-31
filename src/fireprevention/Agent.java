@@ -45,11 +45,11 @@ public class Agent {
 			protecting();
 		
 		setLocation();
-		System.out.println();
+		/*System.out.println();
 		System.out.println("Ganho de mover para UP : " + (unknownGain("UP") + fireRisk("UP") + timeGain("UP")));
 		System.out.println("Ganho de mover para DOWN : " + (unknownGain("DOWN") + fireRisk("DOWN") + timeGain("DOWN")));
 		System.out.println("Ganho de mover para LEFT : " + (unknownGain("LEFT") + fireRisk("LEFT") + timeGain("LEFT")));
-		System.out.println("Ganho de mover para RIGHT : " + (unknownGain("RIGHT") + fireRisk("RIGHT") + timeGain("RIGHT")));
+		System.out.println("Ganho de mover para RIGHT : " + (unknownGain("RIGHT") + fireRisk("RIGHT") + timeGain("RIGHT")));*/
 //		System.out.println(board.time[0][0]+ " " + board.time[0][1]);
 	}
 	

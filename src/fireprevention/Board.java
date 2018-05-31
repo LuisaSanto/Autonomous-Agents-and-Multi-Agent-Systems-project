@@ -111,7 +111,7 @@ public class Board {
 					for(Agent a : UAVs) { 
 						a.go(this.steps);
 					}
-					for(Agent a : UAVs) a.updateRadar(); 
+					for(Agent a : UAVs) { a.updateRadar(); break;}
 					displayBoard();
 					displayAgents();
 					
@@ -225,12 +225,16 @@ public class Board {
 						else
 							board[i][j] = board[i][j] * (1+factor);
 					}
-				}	
+				}
+				else if (value == 5) {
+					this.failed++;
+					GraphicalInterface.blacks.setText(""+this.failed);
+				}
 			}
 		}
 		this.steps++;
 		GraphicalInterface.steps.setText(""+this.steps);
-		lines.add(""+this.steps+";"+this.failed);
+		lines.add(""+this.failed);
 	}
 
 	@SuppressWarnings("deprecation")
