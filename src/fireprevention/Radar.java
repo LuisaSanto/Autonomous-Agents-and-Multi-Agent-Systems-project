@@ -143,6 +143,25 @@ public class Radar extends JFrame {
 		}
 		boardPanel.invalidate();
 	}
+	
+	public void displayBoard(double[][] board, int steps)
+	{
+		for(int i=0; i<nX; i++){
+			for(int j=0; j<nY; j++){
+				double value = board[i][j];
+				JPanel p = ((JPanel)boardPanel.getComponent(i*nY+j));
+				if(value!=0) {
+					value = value/(steps);
+					value*= 3;
+				}
+				int R = (int) (255*value)/3;
+				int G = (int) (255*(3-value)/3); 
+				p.setBackground(new Color(R,G,0));
+				p.setBorder(BorderFactory.createLineBorder(Color.white));
+			}
+		}
+		boardPanel.invalidate();
+	}
 
 	public void displayBoard(double[][] board) {
 		for(int i=0; i<nX; i++){

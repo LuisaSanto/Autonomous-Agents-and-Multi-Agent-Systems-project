@@ -26,7 +26,7 @@ public class GraphicalInterface extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	
-	static JTextField speed, clean, decay;
+	static JTextField speed, clean, decay, maxSteps;
 	static JPanel boardPanel, statsPanel;
 	static JButton run, reset, step;
 	static JLabel blacks, whites, steps;
@@ -114,13 +114,16 @@ public class GraphicalInterface extends JFrame {
 
 	private Component createButtonPanel(Board board) {
 		JPanel panel = new JPanel();
-		panel.setSize(new Dimension(500,80));
-		panel.setLocation(new Point(80,10));
+		panel.setSize(new Dimension(630,80));
+		panel.setLocation(new Point(20,10));
+		
+		maxSteps = new JTextField(" Optional : Max steps");
+		maxSteps.setMargin(new Insets(5,5,5,5));
 		
 		clean = new JTextField(" Optional : Steps to clean ");
 		clean.setMargin(new Insets(5,5,5,5));
 		
-		decay = new JTextField(" Optional : Speed for decay [1.0,1.01]");
+		decay = new JTextField(" Optional : Speed for decay [0,1]");
 		decay.setMargin(new Insets(5,5,5,5));
 
 		step = new JButton("Step");
@@ -131,13 +134,14 @@ public class GraphicalInterface extends JFrame {
 				{
 					int steps;
 					double decayTime;
+					
 					try
 					{
 						decayTime = Double.valueOf(decay.getText());
 					}
 					catch(Exception e)
 					{
-						decayTime = .01; // Default values for decay Time
+						decayTime = .002; // Default values for decay Time
 					}
 					try
 					{
@@ -175,13 +179,22 @@ public class GraphicalInterface extends JFrame {
 					if(time>0){
 						int steps;
 						double decayTime;
+						int maxS;
+						try
+						{
+							maxS = Integer.valueOf(maxSteps.getText());
+						}
+						catch(Exception e)
+						{
+							maxS = 0; // Default values for decay Time
+						}
 						try
 						{
 							decayTime = Double.valueOf(decay.getText());
 						}
 						catch(Exception e)
 						{
-							decayTime = .001; // Default values for decay Time
+							decayTime = .002; // Default values for decay Time
 						}
 						try
 						{
@@ -191,7 +204,7 @@ public class GraphicalInterface extends JFrame {
 						{
 							steps = 5; // Default value of steps that take to cleanse a spot
 						}
-						board.run(time, decayTime, steps);
+						board.run(time, decayTime, steps, maxS);
 	 					run.setText("Stop");						
 					}
  				} else {
@@ -205,6 +218,7 @@ public class GraphicalInterface extends JFrame {
 		panel.add(speed);
 		panel.add(clean);
 		panel.add(decay);
+		panel.add(maxSteps);
 		
 		return panel;
 	}

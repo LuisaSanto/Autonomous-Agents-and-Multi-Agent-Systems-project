@@ -1,6 +1,11 @@
 package fireprevention;
 
 import java.awt.Point;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -20,6 +25,10 @@ public class Board {
 	public GraphicalInterface GUI;
 	public int failed, safe, steps;
 	public double[][] time;
+	public Radar timeRadar;
+	Path file;
+	private int fileN;
+	public List<String> lines;
 	
 	public Board(int nX, int nY, int nUAVs) {
 		this.nX = nX;
@@ -28,10 +37,13 @@ public class Board {
 		this.failed = 0;
 		this.steps = 0;
 		this.safe = 0;
+		this.fileN = 0;
 		initialize();
 	}
 
 	private void initialize() {
+		this.file = Paths.get("graph"+this.fileN+".txt");
+		lines = new ArrayList<String>();
 		Random r = new Random();
 		board = new double[nX][nY];
 		for(int i=0; i<nX; i++)
@@ -53,12 +65,15 @@ public class Board {
 		}
 		Radar radar = new Radar(locations, nX, nY);
 		radar.setVisible(true);
+		timeRadar = new Radar(time, nX, nY);
+		timeRadar.setVisible(true);
 		for(Agent a : UAVs) { 
 			a.setRadar(radar);
 			a.setLocations(locations);
 			a.setLocation();
 		}
 		radar.displayBoard(locations);
+		timeRadar.displayBoard(time, steps);
 		radar.displayAgents(UAVs);
 		
 	}
@@ -73,37 +88,52 @@ public class Board {
 		int time;
 		double decay;
 		int steps;
+		int maxS;
+		Board board;
 		
-		public RunThread(int time, double decay, int steps){
+		public RunThread(int time, double decay, int steps, int maxS, Board board){
+			this.maxS = maxS;
 			this.time = time;
 			this.decay = decay;
 			this.steps = steps;
+			this.board = board;
 		}
 		
 	    public void run() {
 	    	while(true){
-	    		
-		    	removeAgents();
-		    	updateHeatMap(this.decay);
-		    	updateTime();
-		    	for(Agent a : UAVs) a.radar.removeAgents(UAVs);
-				for(Agent a : UAVs) { 
-					a.go(this.steps);
-				}
-				for(Agent a : UAVs) a.updateRadar(); 
-				displayBoard();
-				displayAgents();
-				
-				try {
-					sleep(time*10);
-				} catch (InterruptedException e) {
-				}
+	    		if(board.steps < maxS | maxS == 0) {
+	    			System.out.println(maxS);
+	    			System.out.println(board.steps);
+			    	removeAgents();
+			    	updateHeatMap(this.decay);
+			    	updateTime();
+			    	for(Agent a : UAVs) a.radar.removeAgents(UAVs);
+					for(Agent a : UAVs) { 
+						a.go(this.steps);
+					}
+					for(Agent a : UAVs) a.updateRadar(); 
+					displayBoard();
+					displayAgents();
+					
+					try {
+						sleep(time*10);
+					} catch (InterruptedException e) {
+					}
+	    		}
+	    		else if(GraphicalInterface.run.getText().equals("Stop")) {
+	    		{
+	    				GraphicalInterface.run.setText("Run");
+	    				runThread.interrupt();
+	    				runThread.stop();
+	    			}
+	    		}
+						
 	    	}
 	    }
 	}
 	
-	public void run(int time, double decay, int steps) {
-		runThread = new RunThread(time,decay,steps);
+	public void run(int time, double decay, int steps, int maxS) {
+		runThread = new RunThread(time,decay,steps,maxS, this);
 		runThread.start();
 		displayAgents();
 	}
@@ -126,7 +156,17 @@ public class Board {
 		
 		for(Agent a : UAVs) {
 			a.radar.setVisible(false);
-			a.radar.dispose(); }
+			a.radar.dispose(); 
+			break;
+			}
+		timeRadar.setVisible(false);
+		timeRadar.dispose();
+		try {
+			Files.write(file, lines, Charset.forName("UTF-8"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		this.fileN++;
 		initialize();
 		displayBoard();
 		displayAgents();
@@ -149,6 +189,7 @@ public class Board {
 			for(int j=0; j<nY; j++) {
 				time[m][j] = time[m][j] + 1;
 			}
+		timeRadar.displayBoard(time,steps);
 	}
 
 	public void updateHeatMap(double decay) 
@@ -167,7 +208,7 @@ public class Board {
 					int high = 3;
 					int signal = r.nextInt(high-low) + low;
 					low = 1;
-					high = 5;
+					high = 4;
 					double factor = (r.nextInt(high-low) + low) * decay;
 					
 					if(value * (1+factor) > 5) 
@@ -175,6 +216,7 @@ public class Board {
 						board[i][j] = 5;
 						this.failed++;
 						GraphicalInterface.blacks.setText(""+this.failed);
+						
 					}
 					else
 					{
@@ -188,6 +230,7 @@ public class Board {
 		}
 		this.steps++;
 		GraphicalInterface.steps.setText(""+this.steps);
+		lines.add(""+this.steps+";"+this.failed);
 	}
 
 	@SuppressWarnings("deprecation")

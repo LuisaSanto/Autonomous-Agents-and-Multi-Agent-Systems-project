@@ -9,7 +9,7 @@ import java.awt.EventQueue;
 public class Main {
 
 	public static void main(String[] args) {
-		Board board = new Board(20,20,3);
+		Board board = new Board(60,60,3);
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
